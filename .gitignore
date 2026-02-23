@@ -1,0 +1,35 @@
+# Python & VE
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+.ipynb_checkpoints
+
+# Manga109 dataset
+data/
+dataset/
+*.jpg
+*.jpeg
+*.png
+*.xml
+
+# Model Weights & Checkpoints
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.onnx
+*.weights
+models/
+runs/
+checkpoints/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
