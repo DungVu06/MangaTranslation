@@ -10,6 +10,8 @@ env/
 .ipynb_checkpoints
 *.ipynb
 
+!notebooks/*.ipynb
+
 # Manga109 dataset
 data/
 dataset/

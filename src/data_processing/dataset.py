@@ -78,7 +78,7 @@ class Manga109Dataset(Dataset):
             "labels": labels,
             "area": areas,
             "iscrowd": iscrowd,
-            "image_id": img_id.tensor([int(img_id)], dtype=torch.int64)
+            "image_id": torch.tensor([int(img_id)], dtype=torch.int64)
         }
 
         return img_tensor, target
