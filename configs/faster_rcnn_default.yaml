@@ -1,0 +1,11 @@
+data:
+  train_json: "data/processed/train_coco.json"
+  val_json: "data/processed/val_coco.json"
+  test_json: "data/processed/test_coco.json"
+  img_dir: "data/raw/images"
+  num_workers: 0
+
+model:
+  num_classes: 3
+  anchor_sizes: [32, 64, 128, 256, 512]
+  anchor_ratios: [0.2, 0.5, 1.0, 2.0, 4.0]
