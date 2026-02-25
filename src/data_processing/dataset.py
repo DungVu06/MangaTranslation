@@ -57,6 +57,7 @@ class Manga109Dataset(Dataset):
         if self.transforms:
             transformed = self.transforms(image=img_np, bboxes=boxes, labels=labels)
             img_tensor = transformed["image"]
+            img_tensor = img_tensor.to(torch.float32) / 255.0
             boxes = transformed.get("bboxes", [])
             labels = transformed.get("labels", [])
         else:
