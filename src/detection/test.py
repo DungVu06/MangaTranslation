@@ -7,7 +7,7 @@ import matplotlib.patches as patches
 from tqdm.auto import tqdm
 from torchmetrics.detection import MeanAveragePrecision
 from albumentations.pytorch import ToTensorV2
-from data_processing.dataset import Manga109Dataset
+from src.data_processing.dataset import Manga109Dataset
 
 yaml_path = "./configs/faster_rcnn_default.yaml"
 with open(yaml_path, "r", encoding="utf-8") as f:

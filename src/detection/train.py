@@ -8,9 +8,9 @@ from torchmetrics.detection import MeanAveragePrecision
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
-from data_processing.dataset import Manga109Dataset
-from detection.detection_model import faster_rcnn
-from utils import save_checkpoint, load_checkpoint, clean_ram
+from src.data_processing.dataset import Manga109Dataset
+from src.detection.detection_model import faster_rcnn
+from src.detection.utils import save_checkpoint, load_checkpoint, clean_ram
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 def collate_fn(batch):
@@ -203,5 +203,4 @@ model_save_path = Path("")
 checkpoint_save_path = Path("")
 epochs = config["training"]["num_epochs"]
 
-train(train_dataloader, val_dataloader, model, optimizer, scheduler, device, 
-      config, model_save_path, checkpoint_save_path, use_wandb=True)
+print(config)

@@ -5,7 +5,7 @@ import albumentations as A
 
 from PIL import Image
 from pathlib import Path
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 class Manga109Dataset(Dataset):
     def __init__(self, json_file, img_dir, transforms=None):
