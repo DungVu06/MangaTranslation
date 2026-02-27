@@ -1,0 +1,19 @@
+# Dataset License Notice
+
+This project uses the Manga109 dataset for research and educational purposes.
+
+The Manga109 dataset is provided for academic research use only.
+
+You must download the dataset from the official source:
+http://www.manga109.org/
+
+The dataset images are NOT included in this repository.
+
+Please ensure that you comply with the original dataset license terms before using the data.
+
+This repository only provides:
+- Code for preprocessing
+- Training scripts
+- Model configuration
+
+No copyrighted manga images are redistributed.
