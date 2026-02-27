@@ -11,7 +11,6 @@ from src.translation.renderer_system import MangaRenderer
 def load_trained_model(config_path, weights, device):
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
-    print(config)
     model = faster_rcnn(
         num_classes=config["model"]["num_classes"],
         anchor_sizes=config["model"]["anchor_sizes"],
@@ -26,8 +25,8 @@ def load_trained_model(config_path, weights, device):
 if __name__ == "__main__":
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
     WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
-    INPUT_IMG_PATH = "./data/inference_data/snk_1.jpg"
-    OUTPUT_IMG_PATH = "./outputs/output.jpg"
+    INPUT_IMG_PATH = "./data/inference_data/doraemon_1.jpg"
+    OUTPUT_IMG_PATH = "./outputs/doraemon_1.jpg"
 
     device = "cpu"
 

@@ -1,5 +1,4 @@
 from deep_translator import GoogleTranslator
-import time
 
 class MangaTranslator:
     def __init__(self, src_lang="ja", target_lang="en"):

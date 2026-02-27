@@ -8,13 +8,13 @@ from PIL import Image
 from pathlib import Path
 from src.detection.detection_model import faster_rcnn
 from src.ocr.ocr_system import MangaTextExtractor
+from src.translation.translator_system import MangaTranslator
 
 plt.rcParams['font.family'] = 'MS Gothic'
 
 def load_trained_model(config_path, weights, device):
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
-    print(config)
     model = faster_rcnn(
         num_classes=config["model"]["num_classes"],
         anchor_sizes=config["model"]["anchor_sizes"],
@@ -26,7 +26,7 @@ def load_trained_model(config_path, weights, device):
 
     return model
 
-def inference(img_path, detection_model, ocr_model, device, confidence_threshold=0.6):
+def inference(img_path, detection_model, ocr_model, translator, device, confidence_threshold=0.6):
     img = Image.open(img_path).convert("RGB")
     img_np = np.array(img)
 
@@ -39,7 +39,6 @@ def inference(img_path, detection_model, ocr_model, device, confidence_threshold
     keep_idx = predictions["scores"] >= confidence_threshold
     boxes = predictions["boxes"][keep_idx].cpu().numpy()
     labels = predictions["labels"][keep_idx].cpu().numpy()
-    # scores = predictions["scores"][keep_idx].cpu().numpy()
     
     text_boxes = []
     frame_boxes = []
@@ -51,6 +50,7 @@ def inference(img_path, detection_model, ocr_model, device, confidence_threshold
             text_boxes.append(box)
     
     ocr_results = ocr_model.extract_text(img_path, text_boxes, frame_boxes)
+    traslation_results = translator.translate_with_context(ocr_results)
 
     fig, ax = plt.subplots(1, 1, figsize=(14, 18))
     ax.imshow(img_np)
@@ -63,11 +63,12 @@ def inference(img_path, detection_model, ocr_model, device, confidence_threshold
         )
         ax.add_patch(rect)
 
-    for result in ocr_results:
+    for result in traslation_results:
         box_id = result["box_id"]
         xmin, ymin, xmax, ymax = result["coordinates"]
-        text = result["japanese_text"]
-        print(f"{box_id}: {text}")
+        jp_text = result["japanese_text"]
+        en_text = result["english_text"]
+        print(f"{box_id}:\n {jp_text} -> {en_text}")
 
         rect = patches.Rectangle(
             (xmin, ymin), xmax-xmin, ymax-ymin,
@@ -86,10 +87,11 @@ def inference(img_path, detection_model, ocr_model, device, confidence_threshold
 if __name__ == "__main__":
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
     WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
-    IMG_INFERENCE_PATH = "./data/inference_data/snk_1.jpg"
+    IMG_INFERENCE_PATH = "./data/inference_data/doraemon_1.jpg"
     device = "cpu"
 
     detection_model = load_trained_model(CONFIG_PATH, WEIGHTS_PATH, device)
     ocr_model = MangaTextExtractor()
+    translator = MangaTranslator("ja", "en")
 
-    inference(IMG_INFERENCE_PATH, detection_model, ocr_model, device)
+    inference(IMG_INFERENCE_PATH, detection_model, ocr_model, translator, device)

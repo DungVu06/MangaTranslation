@@ -38,3 +38,5 @@ checkpoints/
 Thumbs.db
 
 kaggle
+wandb
+notes.txt
