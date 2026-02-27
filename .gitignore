@@ -20,6 +20,9 @@ dataset/
 *.png
 *.xml
 
+!demo/*.jpg
+!demo/*.png
+
 # Model Weights & Checkpoints
 *.pt
 *.pth
