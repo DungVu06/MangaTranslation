@@ -24,13 +24,13 @@ def load_trained_model(config_path, weights, device):
 
 if __name__ == "__main__":
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
-    WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
+    DETECTION_WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
     INPUT_IMG_PATH = "./data/inference_data/doraemon_1.jpg"
     OUTPUT_IMG_PATH = "./outputs/doraemon_1.jpg"
 
-    device = "cpu"
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    detection_model = load_trained_model(CONFIG_PATH, WEIGHTS_PATH, device)
+    detection_model = load_trained_model(CONFIG_PATH, DETECTION_WEIGHTS_PATH, device)
     ocr_model = MangaTextExtractor()
     translator_module = MangaTranslator("ja", "en")
     renderer_module = MangaRenderer()

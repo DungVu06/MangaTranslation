@@ -86,11 +86,11 @@ def inference(img_path, detection_model, ocr_model, translator, device, confiden
 
 if __name__ == "__main__":
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
-    WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
+    DETECTION_WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
     IMG_INFERENCE_PATH = "./data/inference_data/doraemon_1.jpg"
-    device = "cpu"
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    detection_model = load_trained_model(CONFIG_PATH, WEIGHTS_PATH, device)
+    detection_model = load_trained_model(CONFIG_PATH, DETECTION_WEIGHTS_PATH, device)
     ocr_model = MangaTextExtractor()
     translator = MangaTranslator("ja", "en")
 

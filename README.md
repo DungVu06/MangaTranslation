@@ -15,6 +15,8 @@ An End-to-End AI pipeline that automatically detects, extracts, translates, and 
 
 ---
 ## 👁️ Demo
+  ![Translation demo](./demo/translation_demo.gif)
+
 ## 🖼️ Results
 | Original | Detection | Translated |
 | :---: | :---: | :---: |
@@ -90,9 +92,11 @@ python main.py
 * Output: The fully translated and rendered image will be saved in `./outputs/output.jpg`.
 
 ## 🆙 Version History
-* **v1.0.0 (Current):**
+* **v1.0.0:**
   * Successfully implemented a functional end-to-end pipeline; however, latency remains a significant bottleneck.
   * Core components, including Object Detection (Faster R-CNN), OCR, Translation, and Rendering, are operational and meet basic requirements.
+* **v1.0.1 (Current):**
+  * Updated demo in README.md using Gradio
 
 ## 🧠 Current Challenges
   * **Contextual Constraints**: The model is currently limited to extracting text exclusively within speech bubbles.

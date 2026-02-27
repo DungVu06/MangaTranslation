@@ -1,5 +1,4 @@
 import textwrap
-import os
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -58,4 +57,4 @@ class MangaRenderer:
 
         img.save(output_path, quality=95)
         
-        img.show()
+        # img.show()
