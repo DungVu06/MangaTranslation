@@ -1,21 +1,23 @@
 import textwrap
+import cv2
+import numpy as np
 
 from PIL import Image, ImageDraw, ImageFont
 
 class MangaRenderer:
-    def __init__(self):
-        pass
+    def __init__(self, font_path="./fonts/ComicNeue-Bold.ttf"):
+        self.font_path = font_path
 
     def _draw_text_centered(self, draw, text, box, max_font_size=40):
         xmin, ymin, xmax, ymax = box
-        box_width = xmax - xmin
+        box_width = xmax - xmin 
         box_height = ymax - ymin
 
         font_size = max_font_size
         
-        while font_size > 8:
+        while font_size > 10:
             try:
-                font = ImageFont.load_default(size=font_size)
+                font = ImageFont.truetype(self.font_path, font_size)
             except TypeError:
                 font = ImageFont.load_default()
 
@@ -41,20 +43,54 @@ class MangaRenderer:
             draw.text((current_x, current_y), line, fill="black", font=font)
             current_y += font_size + line_spacing
 
-    def render_translated_image(self, image_path, translated_data, output_path="final_translated_manga.jpg"):
-        img = Image.open(image_path).convert("RGB")
-        draw = ImageDraw.Draw(img)
+    def render_translated_image(self, image_path, translated_data, output_path):
+        img_cv2 = cv2.imread(image_path)
+        
+        for item in translated_data:
+            text_en = item.get("english_text", "")
+
+            xmin, ymin, xmax, ymax = map(int, item["coordinates"])
+           
+            ymin, ymax = max(0, ymin), min(img_cv2.shape[0], ymax)
+            xmin, xmax = max(0, xmin), min(img_cv2.shape[1], xmax)
+
+            roi = img_cv2[ymin:ymax, xmin:xmax]
+            if roi.size == 0: continue
+
+            gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+            _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            H, W = roi.shape[:2]
+            box_area = H * W
+            
+            for cnt in contours:
+                area = cv2.contourArea(cnt)
+                x, y, w, h = cv2.boundingRect(cnt)
+                
+                touches_edge = (x <= 2 or y <= 2 or x + w >= W - 2 or y + h >= H - 2)
+                
+                if area > box_area * 0.2 and touches_edge:
+                    cv2.drawContours(mask, [cnt], -1, 0, -1)
+
+            kernel = np.ones((6, 6), np.uint8)
+            mask = cv2.dilate(mask, kernel, iterations=2)
+
+            inpainted_roi = cv2.inpaint(roi, mask, inpaintRadius=12, flags=cv2.INPAINT_NS)
+            img_cv2[ymin:ymax, xmin:xmax] = inpainted_roi
+
+        img_rgb = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2RGB)
+        img_pil = Image.fromarray(img_rgb)
+        draw = ImageDraw.Draw(img_pil)
 
         for item in translated_data:
             text_en = item.get("english_text", "")
-            if not text_en:
-                continue
-
+            # text_en = ""
             xmin, ymin, xmax, ymax = map(int, item["coordinates"])
-
-            draw.rectangle([xmin, ymin, xmax, ymax], fill="white")
             self._draw_text_centered(draw, text_en, [xmin, ymin, xmax, ymax])
-
-        img.save(output_path, quality=95)
         
-        # img.show()
+        img_pil.save(output_path, quality=95)
+
+if __name__ == "__main__":
+    renderer = MangaRenderer()
+    print("hello")

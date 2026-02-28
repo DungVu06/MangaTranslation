@@ -1,7 +1,9 @@
 import torch
 import yaml
 import numpy as np
+import argparse
 
+from pathlib import Path
 from PIL import Image
 from src.detection.detection_model import faster_rcnn
 from src.ocr.ocr_system import MangaTextExtractor
@@ -23,11 +25,22 @@ def load_trained_model(config_path, weights, device):
     return model
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", type=str, help="Input image file name")
+    args = parser.parse_args()
+
+    INPUT_DIR = Path("./data/input")
+    OUTPUT_DIR = Path("./outputs")
+
+    input_path = INPUT_DIR / args.filename
+    output_path = OUTPUT_DIR / f"{input_path.stem}_translated{input_path.suffix}"
+
+    INPUT_IMG_PATH = str(input_path)
+    OUTPUT_IMG_PATH = str(output_path)
+    
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
     DETECTION_WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
-    INPUT_IMG_PATH = "./data/inference_data/doraemon_1.jpg"
-    OUTPUT_IMG_PATH = "./outputs/doraemon_1.jpg"
-
+    
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     detection_model = load_trained_model(CONFIG_PATH, DETECTION_WEIGHTS_PATH, device)

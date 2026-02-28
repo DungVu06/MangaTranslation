@@ -1,4 +1,5 @@
 import torch
+import argparse
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
@@ -87,11 +88,19 @@ def inference(img_path, detection_model, ocr_model, translator, device, confiden
 if __name__ == "__main__":
     CONFIG_PATH = "./configs/faster_rcnn_default.yaml"
     DETECTION_WEIGHTS_PATH = "./models/faster_rcnn_default_weights.pt"
-    IMG_INFERENCE_PATH = "./data/inference_data/doraemon_1.jpg"
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", type=str, help="Input image file name")
+    args = parser.parse_args()
+
+    INPUT_DIR = Path("./data/input")
+    input_path = INPUT_DIR / args.filename
+    INPUT_IMG_PATH = str(input_path)
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     detection_model = load_trained_model(CONFIG_PATH, DETECTION_WEIGHTS_PATH, device)
     ocr_model = MangaTextExtractor()
     translator = MangaTranslator("ja", "en")
 
-    inference(IMG_INFERENCE_PATH, detection_model, ocr_model, translator, device)
+    inference(INPUT_IMG_PATH, detection_model, ocr_model, translator, device)

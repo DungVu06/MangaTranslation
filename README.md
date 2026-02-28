@@ -86,27 +86,30 @@ python inference.py
 2. **Full Pipeline (End-to-End Translation)**
 To run the complete process from a raw Japanese manga page to a translated English page:
 ``` bash
-python main.py
+python main.py FILE-NAME
 ```
-* Input: Update the image path in main.py (e.g., `./data/inference_data/snk_1.jpg`).
+* Input: the image file name in main.py (e.g., `.snk_1.jpg`). Notice: Input data must be stored in `./data/input`
 * Output: The fully translated and rendered image will be saved in `./outputs/output.jpg`.
-
-## 🆙 Version History
-* **v1.0.0:**
-  * Successfully implemented a functional end-to-end pipeline; however, latency remains a significant bottleneck.
-  * Core components, including Object Detection (Faster R-CNN), OCR, Translation, and Rendering, are operational and meet basic requirements.
-* **v1.0.1 (Current):**
-  * Updated demo in README.md using Gradio
 
 ## 🧠 Current Challenges
   * **Contextual Constraints**: The model is currently limited to extracting text exclusively within speech bubbles.
   * **Geometric Sensitivity**: Performance degrades significantly when processing non-rectangular or non-horizontal frames.
   * **Complex Scene Handling**: The system struggles with high-density action scenes, overlapping characters, or cluttered text layouts.
-  * **Text Reflow Issues**: The text-wrapping logic is rudimentary, relying on fixed bounding boxes which often leads to unnatural line breaks.
-  * **Rendering Artifacts**: The current rendering logic utilizes simple white rectangular masks. This approach fails to account for background gradients (e.g., aged/yellowish paper) and occasionally fails to completely occlude the original Japanese text.
-  * **Performance Bottlenecks**: Overall execution speed is suboptimal due to the overhead of the Faster R-CNN architecture and external API latency.
-  * **Typography**: The selection of fonts is aesthetically lacking and does not match the original manga/comic style.
+  * **Text Reflow Issues**: The text-wrapping logic is rudimentary, relying on fixed bounding boxes which often leads to unnatural line breaks. Text size is not flexible making it not optimized for different bubble's sizes.
+  * **Rendering Artifacts**: The model struggles when a character occupies a significant portion of the speech bubble; the in-painting algorithm may inadvertently erase parts of the character's body (specifically following the text's bounding box, which results in an unnatural visual output). The text removal algorithm encounters significant difficulties when processing raw images (low-resolution or uncleaned source material).
+  * **Performance Bottlenecks**: Overall execution speed is suboptimal due to the overhead of the Faster R-CNN architecture and external API latency. (~6s/img)
   * **Layout Sequencing**: The sorting algorithm fails to correctly sequence text when processing double-page spreads (two pages per image) instead of individual pages.
+  
+## 🆙 Version History
+* **v1.0.0:**
+  * Successfully implemented a functional end-to-end pipeline; however, latency remains a significant bottleneck.
+  * Core components, including Object Detection (Faster R-CNN), OCR, Translation, and Rendering, are operational and meet basic requirements.
+* **v1.0.1:**
+  * Updated demo in README.md using Gradio
+* **v1.1.0 (Current):**
+  * Better colors and cleaner text removal in the final translated images.
+  * Minor updates to make running main.py and inference.py easier.
+  * Update new font.
 
 ## 🙏 Thanks for Watching
 If you find this project interesting or useful, feel free to ⭐ star the repository and share your feedback.
