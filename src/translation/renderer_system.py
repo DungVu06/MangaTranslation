@@ -8,40 +8,87 @@ class MangaRenderer:
     def __init__(self, font_path="./fonts/ComicNeue-Bold.ttf"):
         self.font_path = font_path
 
-    def _draw_text_centered(self, draw, text, box, max_font_size=40):
+    def _draw_text_centered(self, draw, text, box, max_font_size=40, min_font_size=10):
         xmin, ymin, xmax, ymax = box
         box_width = xmax - xmin 
         box_height = ymax - ymin
 
-        font_size = max_font_size
+        if not text.strip():
+            return
         
-        while font_size > 10:
-            try:
-                font = ImageFont.truetype(self.font_path, font_size)
-            except TypeError:
-                font = ImageFont.load_default()
+        font_cache = {}
+        def get_font(size):
+            if size not in font_cache:
+                try:
+                    font_cache[size] = ImageFont.truetype(self.font_path, size)
+                except TypeError:
+                    font_cache[size] = ImageFont.load_default()
+            return font_cache[size]
+        
+        def wrap_text(text, font):
+            words = text.split()
+            lines = []
+            current_line = ""
 
-            avg_char_width = font.getlength("a") if hasattr(font, 'getlength') else font_size * 0.5
-            max_chars_per_line = max(1, int((box_width * 0.9) / avg_char_width))
+            for word in words:
+                test_line = word if current_line == "" else current_line + " " + word
+                bbox = draw.textbbox((0, 0), test_line, font=font)
+                width = bbox[2] - bbox[0]
 
-            lines = textwrap.wrap(text, width=max_chars_per_line)
-
-            line_spacing = 4
-            total_text_height = len(lines) * font_size + (len(lines) - 1) * line_spacing
-
-            if total_text_height <= (box_height * 0.9):
-                break
+                if width <= box_width * 0.9:
+                    current_line = test_line
+                else:
+                    lines.append(current_line)
+                    current_line = word
             
-            font_size -= 2
+            if current_line:
+                lines.append(current_line)
 
-        current_y = ymin + (box_height - total_text_height) / 2
+            return lines
 
-        for line in lines:
-            line_width = font.getlength(line) if hasattr(font, 'getlength') else len(line) * font_size * 0.5
+        low, high = min_font_size, max_font_size
+        best_size = min_font_size
+        best_lines = []
+
+        while low <= high:
+            mid = (low + high) // 2
+            font = get_font(mid)
+            lines = wrap_text(text, font)
+
+            line_spacing = int(mid * 0.2)
+            total_height = sum(
+                draw.textbbox((0, 0), line, font=font)[3] - 
+                draw.textbbox((0, 0), line, font=font)[1]
+                for line in lines
+            ) + (len(lines) - 1) * line_spacing
+
+            if total_height <= box_height * 0.9:
+                best_size = mid
+                best_lines = lines
+                low = mid + 1
+            else:
+                high = mid - 1
+        
+        font = get_font(best_size)
+        line_spacing = int(best_size * 0.2)
+
+        total_height = sum(
+            draw.textbbox((0, 0), line, font=font)[3] - 
+            draw.textbbox((0, 0), line, font=font)[1]
+            for line in best_lines
+        ) + (len(lines) - 1) * line_spacing
+
+        current_y = ymin + (box_height - total_height) / 2
+
+        for line in best_lines:
+            bbox = draw.textbbox((0, 0), line, font=font)
+            line_width = bbox[2] - bbox[0]
+            line_height = bbox[3] - bbox[1]
+
             current_x = xmin + (box_width - line_width) / 2
-            
             draw.text((current_x, current_y), line, fill="black", font=font)
-            current_y += font_size + line_spacing
+
+            current_y += line_height + line_spacing
 
     def render_translated_image(self, image_path, translated_data, output_path):
         img_cv2 = cv2.imread(image_path)

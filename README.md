@@ -15,12 +15,12 @@ An End-to-End AI pipeline that automatically detects, extracts, translates, and 
 
 ---
 ## 👁️ Demo
-  ![Translation demo](./demo/translation_demo.gif)
+  ![Translation demo](./demo/demo.gif)
 
 ## 🖼️ Results
 | Original | Detection | Translated |
 | :---: | :---: | :---: |
-| ![Original](./demo/demo_img.jpg) | ![Detection](./demo/demo_img_detection.jpg) | ![Result](./demo/demo_img_translated.png) |
+| ![Original](./demo/original_img.jpg) | ![Detection](./demo/detection_img.png) | ![Result](./demo/translated_img.jpg) |
 
 ## 📂 Project Structure
 
@@ -97,7 +97,7 @@ python main.py FILE-NAME
   * **Complex Scene Handling**: The system struggles with high-density action scenes, overlapping characters, or cluttered text layouts.
   * **Text Reflow Issues**: The text-wrapping logic is rudimentary, relying on fixed bounding boxes which often leads to unnatural line breaks. Text size is not flexible making it not optimized for different bubble's sizes.
   * **Rendering Artifacts**: The model struggles when a character occupies a significant portion of the speech bubble; the in-painting algorithm may inadvertently erase parts of the character's body (specifically following the text's bounding box, which results in an unnatural visual output). The text removal algorithm encounters significant difficulties when processing raw images (low-resolution or uncleaned source material).
-  * **Performance Bottlenecks**: Overall execution speed is suboptimal due to the overhead of the Faster R-CNN architecture and external API latency. (~6s/img)
+  * **Performance Bottlenecks**: Overall execution speed is suboptimal due to the overhead of the Faster R-CNN architecture and external API latency. (~8s/img)
   * **Layout Sequencing**: The sorting algorithm fails to correctly sequence text when processing double-page spreads (two pages per image) instead of individual pages.
   
 ## 🆙 Version History
@@ -106,10 +106,13 @@ python main.py FILE-NAME
   * Core components, including Object Detection (Faster R-CNN), OCR, Translation, and Rendering, are operational and meet basic requirements.
 * **v1.0.1:**
   * Updated demo in README.md using Gradio
-* **v1.1.0 (Current):**
+* **v1.1.0:**
   * Better colors and cleaner text removal in the final translated images.
   * Minor updates to make running main.py and inference.py easier.
   * Update new font.
+* **v1.2.0 (Current):**
+  * Update new text wrapping/size algorithms for faster and more accurate translated text!
+
 
 ## 🙏 Thanks for Watching
 If you find this project interesting or useful, feel free to ⭐ star the repository and share your feedback.
